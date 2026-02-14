@@ -4,7 +4,7 @@ services:
     env: python
     plan: free
     buildCommand: |
-      apt-get update && apt-get install -y ffmpeg libsndfile1
+      apt-get update && apt-get install -y ffmpeg libmp3lame-dev lame libsndfile1
       pip install --upgrade pip
       pip install -r requirements.txt
     startCommand: gunicorn app:app --timeout 300
@@ -15,10 +15,7 @@ services:
         generateValue: true
       - key: PYTHON_VERSION
         value: 3.10.0
-      - key: TF_CPP_MIN_LOG_LEVEL
-        value: "2"
     disk:
       name: uploads
       mountPath: /opt/render/project/src/uploads
       sizeGB: 1
-      
