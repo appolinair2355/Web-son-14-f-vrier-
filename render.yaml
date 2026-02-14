@@ -4,16 +4,18 @@ services:
     env: python
     plan: free
     buildCommand: |
-      apt-get update && apt-get install -y ffmpeg
+      apt-get update && apt-get install -y ffmpeg libsndfile1
       pip install -r requirements.txt
-    startCommand: gunicorn app:app
+    startCommand: gunicorn app:app --timeout 300
     envVars:
       - key: FLASK_ENV
         value: production
       - key: SECRET_KEY
         generateValue: true
       - key: PYTHON_VERSION
-        value: 3.9.0
+        value: 3.10.0
+      - key: ONNXRUNTIME_CACHE
+        value: /tmp/onnx_cache
     disk:
       name: uploads
       mountPath: /opt/render/project/src/uploads
