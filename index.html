@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Séparation Audio - Sossou Kouamé</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .loader-container {
+            text-align: center;
+            color: white;
+        }
+        
+        .loader {
+            width: 80px;
+            height: 80px;
+            border: 5px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 30px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .creator {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .creator-name {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .redirect-text {
+            margin-top: 20px;
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+    </style>
+    <meta http-equiv="refresh" content="2;url=/register">
+</head>
+<body>
+    <div class="loader-container">
+        <div class="loader"></div>
+        <h1>🎵 Séparation Audio</h1>
+        <p>Chargement de l'application...</p>
+        
+        <div class="creator">
+            <div class="creator-name">Développé par Sossou Kouamé Appolinaire</div>
+            <div style="font-size: 0.9em; opacity: 0.9;">Développeur Web Full Stack</div>
+            <div style="margin-top: 10px; font-size: 0.9em;">📱 +2290167924076</div>
+        </div>
+        
+        <p class="redirect-text">Redirection vers l'inscription...</p>
+    </div>
+</body>
+</html>
