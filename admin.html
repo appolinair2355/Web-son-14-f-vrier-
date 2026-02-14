@@ -95,6 +95,65 @@
             font-size: 1.1em;
         }
         
+        /* Upload Section pour Admin */
+        .upload-section {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+        
+        .upload-section h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .drop-zone {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .drop-zone:hover {
+            background: #f8f9ff;
+        }
+        
+        .btn-upload {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+        
+        /* Progress Bar */
+        .progress-container {
+            display: none;
+            margin: 15px 0;
+            background: #f0f0f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 25px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+        
         /* Table Section */
         .table-section {
             background: white;
@@ -168,6 +227,11 @@
             color: #155724;
         }
         
+        .status-processing {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
         .status-failed {
             background: #f8d7da;
             color: #721c24;
@@ -185,10 +249,6 @@
             font-weight: 600;
         }
         
-        .audio-link:hover {
-            text-decoration: underline;
-        }
-        
         .empty-state {
             text-align: center;
             padding: 60px;
@@ -198,6 +258,29 @@
         .empty-state-icon {
             font-size: 4em;
             margin-bottom: 20px;
+        }
+        
+        /* Admin audios list */
+        .admin-audios {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+        
+        .admin-audios h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .audio-item {
+            border-bottom: 1px solid #eee;
+            padding: 15px 0;
+        }
+        
+        .audio-item:last-child {
+            border-bottom: none;
         }
     </style>
 </head>
@@ -230,6 +313,56 @@
             </div>
         </div>
         
+        <!-- Upload Section pour Admin -->
+        <div class="upload-section">
+            <h2>🎵 Séparer un audio (Admin)</h2>
+            <p>Vous pouvez aussi effectuer des séparations d'audio comme les utilisateurs.</p>
+            
+            <form id="adminUploadForm" method="POST" enctype="multipart/form-data">
+                <div class="drop-zone" onclick="document.getElementById('adminAudio').click()">
+                    <p>📁 Cliquez ou déposez votre fichier audio ici</p>
+                    <p style="font-size: 0.9em; color: #666; margin-top: 10px;">MP3, WAV, FLAC, M4A, OGG (Max 20MB)</p>
+                </div>
+                <input type="file" id="adminAudio" name="audio" style="display: none;" accept="audio/*" required onchange="updateAdminFileName(this)">
+                <p id="adminFileName" style="color: #667eea; font-weight: 600; margin: 10px 0;"></p>
+                
+                <div class="progress-container" id="adminProgressContainer">
+                    <div class="progress-bar" id="adminProgressBar">0%</div>
+                </div>
+                
+                <button type="submit" class="btn-upload">🚀 Lancer la séparation</button>
+            </form>
+        </div>
+        
+        <!-- Admin Audios -->
+        {% if admin_audios %}
+        <div class="admin-audios">
+            <h2>🎧 Mes séparations (Admin)</h2>
+            {% for audio in admin_audios %}
+            <div class="audio-item">
+                <strong>{{ audio.filename }}</strong>
+                {% if audio.status == 'processing' %}
+                <span class="status-badge status-processing">⏳ En cours</span>
+                {% elif audio.status == 'completed' %}
+                <span class="status-badge status-completed">✅ Terminé</span>
+                {% endif %}
+                <br>
+                <small style="color: #666;">{{ audio.created_at }}</small>
+                
+                {% if audio.output_files %}
+                <div style="margin-top: 10px;">
+                    {% for stem in audio.output_files %}
+                    <audio controls style="width: 100%; margin: 5px 0;">
+                        <source src="/audio/{{ stem }}" type="audio/wav">
+                    </audio>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
         <!-- Table -->
         <div class="table-section">
             <h2>📊 Activités Récentes</h2>
@@ -255,12 +388,13 @@
                             </div>
                         </td>
                         <td>
-                            <a href="#" class="audio-link">🎧 {{ item.audio_filename }}</a>
+                            <span class="audio-link">🎧 {{ item.audio_filename }}</span>
                         </td>
                         <td>{{ item.created_at[:10] if item.created_at else 'N/A' }}</td>
                         <td>
                             <span class="status-badge status-{{ item.status }}">
                                 {% if item.status == 'completed' %}✅ Terminé
+                                {% elif item.status == 'processing' %}⏳ En cours
                                 {% else %}❌ Échoué
                                 {% endif %}
                             </span>
@@ -285,5 +419,48 @@
             {% endif %}
         </div>
     </div>
+    
+    <script>
+        function updateAdminFileName(input) {
+            const fileName = document.getElementById('adminFileName');
+            if (input.files && input.files[0]) {
+                fileName.textContent = '📎 ' + input.files[0].name;
+            }
+        }
+        
+        // Gérer l'upload admin avec AJAX
+        document.getElementById('adminUploadForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const progressContainer = document.getElementById('adminProgressContainer');
+            const progressBar = document.getElementById('adminProgressBar');
+            
+            submitBtn.disabled = true;
+            submitBtn.textContent = '⏳ Upload en cours...';
+            
+            try {
+                const response = await fetch('/admin', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    progressContainer.style.display = 'block';
+                    progressBar.textContent = '✅ Upload terminé - Traitement en cours...';
+                    progressBar.style.width = '100%';
+                    
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                submitBtn.disabled = false;
+                submitBtn.textContent = '🚀 Lancer la séparation';
+            }
+        });
+    </script>
 </body>
 </html>
