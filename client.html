@@ -13,12 +13,10 @@
             min-height: 100vh;
         }
         
-        /* Header style Facebook */
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             padding: 20px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -36,17 +34,6 @@
             border-radius: 50%;
             border: 3px solid white;
             object-fit: cover;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-        
-        .profile-info h2 {
-            font-size: 1.3em;
-            margin-bottom: 5px;
-        }
-        
-        .profile-info p {
-            opacity: 0.9;
-            font-size: 0.9em;
         }
         
         .logout-btn {
@@ -55,15 +42,8 @@
             padding: 10px 20px;
             border-radius: 25px;
             text-decoration: none;
-            transition: all 0.3s ease;
         }
         
-        .logout-btn:hover {
-            background: rgba(255,255,255,0.3);
-            transform: translateY(-2px);
-        }
-        
-        /* Main content */
         .container {
             max-width: 800px;
             margin: 40px auto;
@@ -79,23 +59,12 @@
             margin-bottom: 30px;
         }
         
-        .upload-icon {
-            font-size: 4em;
-            margin-bottom: 20px;
-        }
-        
         .drop-zone {
             border: 3px dashed #667eea;
             border-radius: 15px;
             padding: 40px;
             margin: 20px 0;
-            transition: all 0.3s ease;
             cursor: pointer;
-        }
-        
-        .drop-zone:hover {
-            background: #f8f9ff;
-            transform: scale(1.02);
         }
         
         .file-input {
@@ -110,36 +79,25 @@
             border-radius: 30px;
             font-size: 1.1em;
             cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 20px;
-        }
-        
-        .btn-upload:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
         }
         
         .btn-upload:disabled {
             background: #ccc;
-            cursor: not-allowed;
-            transform: none;
         }
         
-        /* Progress Bar */
-        .progress-container {
+        .progress-wrapper {
             display: none;
             margin: 20px 0;
             background: #f0f0f0;
             border-radius: 10px;
             overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
         
         .progress-bar {
-            height: 30px;
+            height: 35px;
             background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
             width: 0%;
-            transition: width 0.3s ease;
+            transition: width 0.5s ease;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -147,13 +105,6 @@
             font-weight: 600;
         }
         
-        .progress-status {
-            margin-top: 10px;
-            color: #667eea;
-            font-weight: 600;
-        }
-        
-        /* Audio list */
         .audio-list {
             background: white;
             border-radius: 20px;
@@ -166,23 +117,13 @@
             padding: 20px 0;
         }
         
-        .audio-item:last-child {
-            border-bottom: none;
-        }
-        
-        .audio-title {
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 10px;
-        }
-        
         .status-badge {
             display: inline-block;
             padding: 5px 12px;
             border-radius: 15px;
             font-size: 0.85em;
             font-weight: 600;
-            margin-bottom: 10px;
+            margin: 10px 0;
         }
         
         .status-processing {
@@ -195,14 +136,9 @@
             color: #155724;
         }
         
-        .status-error {
-            background: #f8d7da;
-            color: #721c24;
-        }
-        
         .stems {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 10px;
             margin-top: 15px;
         }
@@ -211,39 +147,26 @@
             background: #f0f4ff;
             padding: 10px;
             border-radius: 10px;
-            font-size: 0.9em;
-        }
-        
-        .stem-label {
-            font-weight: 600;
-            color: #667eea;
-            margin-bottom: 5px;
+            text-align: center;
         }
         
         audio {
             width: 100%;
             margin-top: 5px;
+            height: 40px;
         }
         
-        /* Popups */
         .popup-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
+n            height: 100%;
             background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(5px);
             display: none;
             justify-content: center;
             align-items: center;
             z-index: 1000;
-            animation: fadeIn 0.3s ease;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
         }
         
         .popup {
@@ -253,13 +176,6 @@
             max-width: 500px;
             width: 90%;
             text-align: center;
-            animation: slideUp 0.4s ease;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        }
-        
-        @keyframes slideUp {
-            from { transform: translateY(50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
         }
         
         .welcome-popup {
@@ -267,106 +183,19 @@
             color: white;
         }
         
-        .feedback-popup {
-            background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
-        }
-        
-        .popup h2 {
-            margin-bottom: 20px;
-            font-size: 1.8em;
-        }
-        
-        .popup p {
-            margin-bottom: 15px;
-            line-height: 1.6;
-        }
-        
-        .whatsapp {
-            font-size: 1.2em;
-            font-weight: 600;
-            margin-top: 10px;
-        }
-        
         .countdown {
             font-size: 2em;
             font-weight: bold;
             margin: 20px 0;
         }
-        
-        textarea {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid rgba(255,255,255,0.5);
-            border-radius: 15px;
-            font-size: 1em;
-            resize: vertical;
-            min-height: 100px;
-            margin: 15px 0;
-        }
-        
-        .btn-popup {
-            background: white;
-            color: #667eea;
-            padding: 12px 30px;
-            border: none;
-            border-radius: 25px;
-            font-size: 1em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-popup:hover {
-            transform: scale(1.05);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-        }
-        
-        .flash-messages {
-            margin-bottom: 20px;
-        }
-        
-        .flash {
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            animation: slideDown 0.3s ease;
-        }
-        
-        @keyframes slideDown {
-            from { transform: translateY(-20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        
-        .flash.success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        
-        .flash.error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        
-        .info-box {
-            background: #e3f2fd;
-            border-left: 4px solid #2196f3;
-            padding: 15px;
-            margin: 20px 0;
-            border-radius: 5px;
-            text-align: left;
-        }
     </style>
 </head>
 <body>
-    <!-- Header -->
     <div class="header">
         <div class="profile-section">
             <img src="/uploads/{{ user.photo_profil }}" alt="Profile" class="profile-pic" onerror="this.src='https://via.placeholder.com/60'">
             <div class="profile-info">
                 <h2>{{ user.prenom }} {{ user.nom }}</h2>
-                <p>Espace Client</p>
             </div>
         </div>
         <a href="/logout" class="logout-btn">🚪 Déconnexion</a>
@@ -375,76 +204,59 @@
     <div class="container">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
-                <div class="flash-messages">
-                    {% for category, message in messages %}
-                        <div class="flash {{ category }}">{{ message }}</div>
-                    {% endfor %}
-                </div>
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
             {% endif %}
         {% endwith %}
         
-        <!-- Upload Section -->
         <div class="upload-card">
-            <div class="upload-icon">🎵</div>
-            <h2>Séparer votre audio</h2>
-            <p>Importez un fichier audio (max 20 MB) pour séparer les pistes</p>
-            
-            <div class="info-box">
-                <strong>ℹ️ Information :</strong> Ce système sépare votre audio en 4 pistes : 🥁 Drums, 🎸 Bass, 🎤 Vocals, 🎹 Other.
-            </div>
+            <h2>🎵 Séparer votre audio</h2>
             
             <form id="uploadForm" action="/upload" method="POST" enctype="multipart/form-data">
                 <div class="drop-zone" onclick="document.getElementById('audio').click()">
                     <p>📁 Cliquez ou déposez votre fichier ici</p>
-                    <p style="font-size: 0.9em; color: #666; margin-top: 10px;">MP3, WAV, FLAC, M4A, OGG (Max 20MB)</p>
+                    <p style="color: #666;">MP3, WAV, FLAC, M4A, OGG (Max 20MB)</p>
                 </div>
                 <input type="file" id="audio" name="audio" class="file-input" accept="audio/*" required onchange="updateFileName(this)">
-                <p id="fileName" style="color: #667eea; font-weight: 600; margin: 10px 0;"></p>
+                <p id="fileName" style="color: #667eea; font-weight: 600;"></p>
                 
-                <!-- Progress Bar -->
-                <div class="progress-container" id="progressContainer">
+                <div class="progress-wrapper" id="progressWrapper">
                     <div class="progress-bar" id="progressBar">0%</div>
                 </div>
-                <div class="progress-status" id="progressStatus"></div>
                 
                 <button type="submit" class="btn-upload" id="submitBtn">🚀 Séparer mon audio</button>
             </form>
         </div>
         
-        <!-- Previous Audios -->
         {% if audios %}
         <div class="audio-list">
-            <h3 style="margin-bottom: 20px; color: #333;">🎧 Mes séparations</h3>
+            <h3>🎧 Mes séparations</h3>
             {% for audio in audios %}
-            <div class="audio-item" data-audio-id="{{ audio.id }}">
-                <div class="audio-title">{{ audio.filename }}</div>
-                <p style="color: #666; font-size: 0.9em;">{{ audio.created_at }}</p>
+            <div class="audio-item" id="audio-{{ audio.id }}">
+                <div style="font-weight: 600;">{{ audio.filename }}</div>
+                <small style="color: #666;">{{ audio.created_at[:19] }}</small>
                 
                 {% if audio.status == 'processing' %}
-                <span class="status-badge status-processing">⏳ En cours de traitement...</span>
-                <div class="progress-container" style="display: block; margin-top: 10px;">
-                    <div class="progress-bar" id="progress-{{ audio.id }}" style="width: 0%">0%</div>
+                <div>
+                    <span class="status-badge status-processing" id="status-{{ audio.id }}">⏳ En cours...</span>
+                    <div class="progress-wrapper" style="display: block; margin-top: 10px;">
+                        <div class="progress-bar" id="progress-{{ audio.id }}" style="width: 10%">10%</div>
+                    </div>
                 </div>
-                <script>
-                    // Suivre la progression pour les fichiers en cours
-                    trackProgress({{ audio.id }});
-                </script>
                 {% elif audio.status == 'completed' %}
                 <span class="status-badge status-completed">✅ Terminé</span>
-                {% elif audio.status == 'error' %}
-                <span class="status-badge status-error">❌ Erreur</span>
                 {% endif %}
                 
                 {% if audio.output_files %}
                 <div class="stems">
                     {% for stem in audio.output_files %}
                     <div class="stem">
-                        <div class="stem-label">
+                        <div style="font-weight: 600; color: #667eea; font-size: 0.9em;">
                             {% if 'drums' in stem %}🥁 Drums
                             {% elif 'bass' in stem %}🎸 Bass
                             {% elif 'vocals' in stem %}🎤 Vocals
                             {% elif 'other' in stem %}🎹 Other
-                            {% else %}🎵 {{ stem }}
                             {% endif %}
                         </div>
                         <audio controls>
@@ -460,153 +272,101 @@
         {% endif %}
     </div>
     
-    <!-- Welcome Popup -->
     {% if show_welcome %}
     <div class="popup-overlay" id="welcomePopup" style="display: flex;">
         <div class="popup welcome-popup">
             <h2>🎉 Bienvenue !</h2>
-            <p>Bienvenue sur le site de séparation de voix créé par</p>
-            <p style="font-size: 1.3em; font-weight: bold;">Sossou Kouamé Appolinaire</p>
-            <p>Développeur Web</p>
-            <p class="whatsapp">📱 WhatsApp: +2290167924076</p>
+            <p><strong>Sossou Kouamé Appolinaire</strong></p>
+            <p>📱 +2290167924076</p>
             <div class="countdown" id="countdown">10</div>
-            <p style="font-size: 0.9em; opacity: 0.9;">Fermeture automatique...</p>
-        </div>
-    </div>
-    {% endif %}
-    
-    <!-- Feedback Popup -->
-    {% if session.get('show_feedback') %}
-    <div class="popup-overlay" id="feedbackPopup" style="display: flex;">
-        <div class="popup feedback-popup">
-            <h2>⭐ Votre avis compte !</h2>
-            <p>Comment s'est passée la séparation de votre audio ?</p>
-            <form action="/feedback/{{ session.pop('show_feedback') }}" method="POST">
-                <textarea name="feedback_text" placeholder="Dites-nous ce que vous pensez..." required></textarea>
-                <br>
-                <button type="submit" class="btn-popup">✨ Envoyer mon feedback</button>
-            </form>
         </div>
     </div>
     {% endif %}
     
     <script>
-        // Countdown for welcome popup
         {% if show_welcome %}
         let timeLeft = 10;
-        const countdownEl = document.getElementById('countdown');
-        const popup = document.getElementById('welcomePopup');
-        
         const timer = setInterval(() => {
             timeLeft--;
-            countdownEl.textContent = timeLeft;
+            document.getElementById('countdown').textContent = timeLeft;
             if (timeLeft <= 0) {
                 clearInterval(timer);
-                popup.style.opacity = '0';
-                setTimeout(() => popup.style.display = 'none', 300);
+                document.getElementById('welcomePopup').style.display = 'none';
             }
         }, 1000);
         {% endif %}
         
         function updateFileName(input) {
-            const fileName = document.getElementById('fileName');
             if (input.files && input.files[0]) {
-                fileName.textContent = '📎 ' + input.files[0].name;
+                document.getElementById('fileName').textContent = '📎 ' + input.files[0].name;
             }
         }
         
-        // Suivre la progression d'une séparation
+        // Suivre la progression
         function trackProgress(audioId) {
             const checkProgress = setInterval(async () => {
                 try {
-                    const response = await fetch(`/progress/${audioId}`);
+                    const response = await fetch('/progress/' + audioId);
                     const data = await response.json();
                     
-                    const progressBar = document.getElementById(`progress-${audioId}`);
-                    if (progressBar) {
+                    const progressBar = document.getElementById('progress-' + audioId);
+                    const statusBadge = document.getElementById('status-' + audioId);
+                    
+                    if (progressBar && data.progress) {
                         progressBar.style.width = data.progress + '%';
                         progressBar.textContent = data.progress + '%';
-                        
-                        if (data.status === 'completed') {
-                            clearInterval(checkProgress);
-                            location.reload(); // Recharger pour afficher les fichiers
-                        } else if (data.status === 'error') {
-                            clearInterval(checkProgress);
-                            progressBar.style.background = '#dc3545';
-                            progressBar.textContent = 'Erreur';
+                    }
+                    
+                    if (data.status === 'completed') {
+                        clearInterval(checkProgress);
+                        if (statusBadge) {
+                            statusBadge.className = 'status-badge status-completed';
+                            statusBadge.textContent = '✅ Terminé';
+                        }
+                        setTimeout(() => location.reload(), 1500);
+                    } else if (data.status === 'error') {
+                        clearInterval(checkProgress);
+                        if (statusBadge) {
+                            statusBadge.className = 'status-badge status-error';
+                            statusBadge.textContent = '❌ Erreur';
                         }
                     }
                 } catch (e) {
-                    console.error('Erreur lors de la récupération de la progression:', e);
+                    console.error('Erreur:', e);
                 }
-            }, 2000); // Vérifier toutes les 2 secondes
+            }, 2000);
         }
         
-        // Gérer le formulaire d'upload avec AJAX
-        document.getElementById('uploadForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
+        // Démarrer le suivi pour les audios en cours
+        document.addEventListener('DOMContentLoaded', function() {
+            {% for audio in audios %}
+            {% if audio.status == 'processing' %}
+            trackProgress({{ audio.id }});
+            {% endif %}
+            {% endfor %}
+        });
+        
+        // Animation pendant l'upload
+        document.getElementById('uploadForm').addEventListener('submit', function() {
+            const btn = document.getElementById('submitBtn');
+            const wrapper = document.getElementById('progressWrapper');
+            const bar = document.getElementById('progressBar');
             
-            const formData = new FormData(this);
-            const submitBtn = document.getElementById('submitBtn');
-            const progressContainer = document.getElementById('progressContainer');
-            const progressBar = document.getElementById('progressBar');
-            const progressStatus = document.getElementById('progressStatus');
+            btn.disabled = true;
+            btn.textContent = '⏳ Upload...';
+            wrapper.style.display = 'block';
             
-            submitBtn.disabled = true;
-            submitBtn.textContent = '⏳ Upload en cours...';
-            
-            try {
-                // Upload du fichier
-                const response = await fetch('/upload', {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                if (response.redirected) {
-                    // Redirection vers la page client
-                    window.location.href = response.url;
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 5;
+                if (progress <= 30) {
+                    bar.style.width = progress + '%';
+                    bar.textContent = progress + '%';
                 } else {
-                    // Afficher la barre de progression pour le traitement
-                    progressContainer.style.display = 'block';
-                    progressStatus.textContent = '🔧 Séparation en cours...';
-                    
-                    // Récupérer l'ID de l'audio (dernier créé)
-                    // On recharge la page pour démarrer le suivi
-                    setTimeout(() => {
-                        location.reload();
-                    }, 1000);
+                    clearInterval(interval);
+                    bar.textContent = '🔧 Traitement...';
                 }
-            } catch (error) {
-                console.error('Erreur:', error);
-                submitBtn.disabled = false;
-                submitBtn.textContent = '🚀 Séparer mon audio';
-                progressStatus.textContent = '❌ Erreur lors de l\'upload';
-            }
-        });
-        
-        // Drag and drop effects
-        const dropZone = document.querySelector('.drop-zone');
-        
-        dropZone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dropZone.style.background = '#e8ecff';
-            dropZone.style.transform = 'scale(1.02)';
-        });
-        
-        dropZone.addEventListener('dragleave', () => {
-            dropZone.style.background = '';
-            dropZone.style.transform = '';
-        });
-        
-        dropZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dropZone.style.background = '';
-            dropZone.style.transform = '';
-            const files = e.dataTransfer.files;
-            if (files.length) {
-                document.getElementById('audio').files = files;
-                updateFileName(document.getElementById('audio'));
-            }
+            }, 100);
         });
     </script>
 </body>
