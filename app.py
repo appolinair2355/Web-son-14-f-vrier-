@@ -3,10 +3,11 @@ import json
 import hashlib
 import uuid
 import threading
+import shutil
 from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for, session, flash, send_from_directory, jsonify
 from werkzeug.utils import secure_filename
-import demucs.separate
+import subprocess
 
 app = Flask(__name__, template_folder='.')
 app.secret_key = os.environ.get('SECRET_KEY', 'votre-cle-secrete-123')
@@ -23,7 +24,7 @@ separation_progress = {}
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(SEPARATED_FOLDER, exist_ok=True)
 
-# Initialiser les fichiers JSON s'ils n'existent pas
+# Initialiser les fichiers JSON
 def init_json_files():
     for filename in ['users.json', 'audios.json', 'feedbacks.json']:
         if not os.path.exists(filename):
@@ -32,7 +33,6 @@ def init_json_files():
 
 init_json_files()
 
-# Helpers
 def load_json(filename):
     try:
         with open(filename, 'r', encoding='utf-8') as f:
@@ -50,49 +50,48 @@ def hash_password(password):
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-# Vérifier si l'utilisateur est admin
 def is_admin_user(nom, prenom):
     return nom.lower() == "sossou" and prenom.lower() == "kouamé"
 
-def run_separation(audio_id, filepath, output_dir, filename, user_id):
+def run_separation(audio_id, filepath, filename, user_id):
     """Fonction exécutée en arrière-plan pour la séparation"""
     try:
-        separation_progress[audio_id] = {'status': 'starting', 'progress': 0}
+        separation_progress[audio_id] = {'status': 'starting', 'progress': 10}
         
-        # Utiliser Demucs en ligne de commande
-        import subprocess
+        # Commande Demucs
         cmd = [
             'python', '-m', 'demucs',
-            '--out', output_dir,
+            '--out', SEPARATED_FOLDER,
             '--filename', '{track}/{stem}.{ext}',
             filepath
         ]
         
-        separation_progress[audio_id] = {'status': 'processing', 'progress': 30}
+        separation_progress[audio_id] = {'status': 'processing', 'progress': 40}
         
         # Exécuter la commande
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
         
-        separation_progress[audio_id] = {'status': 'finalizing', 'progress': 80}
-        
         if result.returncode == 0:
             # Trouver les fichiers générés
             track_name = os.path.basename(filepath).rsplit('.', 1)[0]
-            model_name = 'htdemucs'  # Modèle par défaut
-            separated_path = os.path.join(output_dir, model_name, track_name)
+            model_name = 'htdemucs'
+            separated_path = os.path.join(SEPARATED_FOLDER, model_name, track_name)
             
             output_files = []
             if os.path.exists(separated_path):
                 for stem in ['vocals', 'drums', 'bass', 'other']:
                     stem_file = os.path.join(separated_path, f"{stem}.wav")
                     if os.path.exists(stem_file):
-                        # Copier vers la racine de separated avec nom unique
-                        new_name = f"{track_name}_{stem}.wav"
+                        # Copier avec nom unique
+                        new_name = f"{audio_id}_{stem}.wav"
                         new_path = os.path.join(SEPARATED_FOLDER, new_name)
-                        os.rename(stem_file, new_path)
+                        shutil.copy2(stem_file, new_path)
                         output_files.append(new_name)
+                
+                # Nettoyer le dossier temporaire
+                shutil.rmtree(os.path.join(SEPARATED_FOLDER, model_name), ignore_errors=True)
             
-            # Mettre à jour le statut dans audios.json
+            # Mettre à jour JSON
             audios = load_json('audios.json')
             for audio in audios:
                 if audio['id'] == audio_id:
@@ -103,10 +102,25 @@ def run_separation(audio_id, filepath, output_dir, filename, user_id):
             
             separation_progress[audio_id] = {'status': 'completed', 'progress': 100}
         else:
-            separation_progress[audio_id] = {'status': 'error', 'progress': 0, 'error': result.stderr}
+            # Erreur
+            audios = load_json('audios.json')
+            for audio in audios:
+                if audio['id'] == audio_id:
+                    audio['status'] = 'error'
+                    audio['error'] = result.stderr[:200]
+                    break
+            save_json('audios.json', audios)
+            separation_progress[audio_id] = {'status': 'error', 'progress': 0, 'error': result.stderr[:200]}
             
     except Exception as e:
-        separation_progress[audio_id] = {'status': 'error', 'progress': 0, 'error': str(e)}
+        audios = load_json('audios.json')
+        for audio in audios:
+            if audio['id'] == audio_id:
+                audio['status'] = 'error'
+                audio['error'] = str(e)[:200]
+                break
+        save_json('audios.json', audios)
+        separation_progress[audio_id] = {'status': 'error', 'progress': 0, 'error': str(e)[:200]}
 
 @app.route('/')
 def index():
@@ -122,22 +136,18 @@ def register():
         
         users = load_json('users.json')
         
-        # Vérifier si email existe déjà
         if any(u['email'] == email for u in users):
             flash('Cet email est déjà utilisé', 'error')
             return redirect(url_for('register'))
         
-        # Gestion de la photo de profil
         photo_filename = 'default.jpg'
         if 'photo' in request.files:
             photo = request.files['photo']
             if photo.filename:
                 ext = photo.filename.rsplit('.', 1)[1].lower()
                 photo_filename = f"profile_{uuid.uuid4().hex}.{ext}"
-                photo_path = os.path.join(UPLOAD_FOLDER, photo_filename)
-                photo.save(photo_path)
+                photo.save(os.path.join(UPLOAD_FOLDER, photo_filename))
         
-        # Déterminer si c'est l'admin
         is_admin = is_admin_user(nom, prenom)
         
         new_user = {
@@ -196,13 +206,12 @@ def client():
     if not user:
         return redirect(url_for('logout'))
     
-    # Récupérer les audios de l'utilisateur
     audios = load_json('audios.json')
     user_audios = [a for a in audios if a['user_id'] == user['id']]
     
     show_welcome = session.pop('show_welcome', False)
     
-    return render_template('client.html', user=user, audios=user_audios, show_welcome=show_welcome, is_admin=False)
+    return render_template('client.html', user=user, audios=user_audios, show_welcome=show_welcome)
 
 @app.route('/upload', methods=['POST'])
 def upload():
@@ -219,7 +228,6 @@ def upload():
         return redirect(url_for('client'))
     
     if file and allowed_file(file.filename):
-        # Vérifier la taille
         file.seek(0, os.SEEK_END)
         file_size = file.tell()
         file.seek(0)
@@ -233,7 +241,7 @@ def upload():
         filepath = os.path.join(UPLOAD_FOLDER, unique_filename)
         file.save(filepath)
         
-        # Créer l'entrée dans audios.json
+        # Créer entrée JSON
         audios = load_json('audios.json')
         audio_id = len(audios) + 1
         audios.append({
@@ -247,14 +255,15 @@ def upload():
         })
         save_json('audios.json', audios)
         
-        # Démarrer la séparation en arrière-plan
+        # Démarrer séparation en arrière-plan
         thread = threading.Thread(
             target=run_separation,
-            args=(audio_id, filepath, SEPARATED_FOLDER, filename, session['user_id'])
+            args=(audio_id, filepath, filename, session['user_id'])
         )
+        thread.daemon = True
         thread.start()
         
-        flash('Séparation démarrée ! Vous pouvez suivre la progression.', 'success')
+        flash('Séparation démarrée ! Suivez la progression ci-dessous.', 'success')
         return redirect(url_for('client'))
     else:
         flash('Format de fichier non supporté', 'error')
@@ -263,7 +272,7 @@ def upload():
 
 @app.route('/progress/<int:audio_id>')
 def get_progress(audio_id):
-    """API pour récupérer la progression de la séparation"""
+    """API pour récupérer la progression"""
     progress = separation_progress.get(audio_id, {'status': 'unknown', 'progress': 0})
     return jsonify(progress)
 
@@ -297,10 +306,9 @@ def admin():
     audios = load_json('audios.json')
     feedbacks = load_json('feedbacks.json')
     
-    # Créer un dictionnaire pour lookup rapide
     users_dict = {u['id']: u for u in users}
     
-    # Gérer l'upload admin (même fonctionnalité que client)
+    # Upload admin
     if request.method == 'POST':
         if 'audio' in request.files:
             file = request.files['audio']
@@ -328,11 +336,11 @@ def admin():
                     })
                     save_json('audios.json', audios_list)
                     
-                    # Démarrer la séparation
                     thread = threading.Thread(
                         target=run_separation,
-                        args=(audio_id, filepath, SEPARATED_FOLDER, filename, session['user_id'])
+                        args=(audio_id, filepath, filename, session['user_id'])
                     )
+                    thread.daemon = True
                     thread.start()
                     
                     flash('Séparation admin démarrée !', 'success')
@@ -340,7 +348,6 @@ def admin():
                     flash('Fichier trop volumineux', 'error')
             return redirect(url_for('admin'))
     
-    # Combiner les données pour le tableau admin
     feedback_list = []
     for audio in audios:
         user = users_dict.get(audio['user_id'], {})
@@ -359,7 +366,6 @@ def admin():
             'output_files': audio.get('output_files', [])
         })
     
-    # Récupérer les audios de l'admin
     admin_audios = [a for a in audios if a['user_id'] == session['user_id']]
     
     stats = {
